@@ -1,3 +1,5 @@
+import { DefaultTheme } from "styled-components";
+
 const spacingBaseSize = 12;
 
 const sizes = {
@@ -39,7 +41,7 @@ const colors = {
   }
 };
 
-export default {
+const theme: DefaultTheme = {
   colors: {
     ...colors
   },
@@ -47,6 +49,15 @@ export default {
     ...sizes
   },
   mixins: {
+    input: () => `
+      background: ${colors.backgrounds.second};
+      border: 1px solid ${colors.borders.main};
+      font-size: ${fontSizes.small};
+          &:hover {
+              background: ${colors.backgrounds.second};
+              border: 1px solid ${colors.borders.second};
+          }
+    `,
     button: () => `
           background: ${colors.backgrounds.main};
           border: 1px solid ${colors.borders.main};
@@ -61,3 +72,5 @@ export default {
         `
   }
 };
+
+export default theme;
