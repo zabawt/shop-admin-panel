@@ -2,6 +2,13 @@ import { DefaultTheme } from "styled-components";
 
 const spacingBaseSize = 12;
 
+const deviceWidths = {
+  giant: 1170,
+  desktop: 992,
+  tablet: 768,
+  phone: 376
+};
+
 const sizes = {
   extraSmall: `${spacingBaseSize / 2}px`,
   small: `${spacingBaseSize}px`,
@@ -48,11 +55,16 @@ const theme: DefaultTheme = {
   padding: {
     ...sizes
   },
+
   mixins: {
     input: () => `
-      background: ${colors.backgrounds.second};
-      border: 1px solid ${colors.borders.main};
-      font-size: ${fontSizes.small};
+          background: ${colors.foregrounds.main};
+          border: 1px solid ${colors.borders.main};
+          padding: ${sizes.small} ${sizes.medium};
+          border-radius: 1.5pt;
+          transition: background ${animationTimes.fast} ease-out, border ${animationTimes.fast} ease-out;
+          font-size: ${fontSizes.small};
+          outline: none;
           &:hover {
               background: ${colors.backgrounds.second};
               border: 1px solid ${colors.borders.second};

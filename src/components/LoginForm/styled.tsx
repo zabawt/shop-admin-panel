@@ -5,9 +5,28 @@ export const SubmitStyled = styled.input`
 `;
 
 export const FormStyled = styled.form`
-  background: ${({ theme }) => theme.colors.foregrounds.main};
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  margin: auto;
+  position: relative;
 `;
 
 export const InputStyled = styled.input`
   ${({ theme }) => theme.mixins.input()}
+`;
+
+export const LabelStyled = styled.label`
+  padding: ${({ theme }) => [theme.padding.medium, 0].join(" ")};
+  font-weight: 800;
+`;
+
+export const SpanStyled = styled.span`
+  position: absolute;
+  font-size: 32px;
+  bottom: 48px;
+  right: 12px;
+  color: black;
+  cursor: pointer;
+  user-select: none;
 `;
