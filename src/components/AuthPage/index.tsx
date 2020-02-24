@@ -1,16 +1,11 @@
 import * as React from "react";
 import { AuthPageContainer } from "./styled";
-import styled from "styled-components";
-
-/**@todo create generic button component */
-const LoginButton = styled.a`
-  ${props => props.theme.mixins.button()}
-`;
+import LoginForm from "./../LoginForm";
 
 const AuthPage = (props: {}) => {
   return (
     <AuthPageContainer>
-      <LoginButton>Login</LoginButton>
+      <LoginForm />
     </AuthPageContainer>
   );
 };
