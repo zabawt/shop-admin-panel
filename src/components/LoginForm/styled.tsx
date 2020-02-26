@@ -19,14 +19,15 @@ export const InputStyled = styled.input`
 export const LabelStyled = styled.label`
   padding: ${({ theme }) => [theme.padding.medium, 0].join(" ")};
   font-weight: 800;
+  font-family: Arial, sans-serif;
 `;
 
 export const SpanStyled = styled.span`
-  position: absolute;
   font-size: 32px;
-  bottom: 48px;
-  right: 12px;
   color: black;
   cursor: pointer;
   user-select: none;
+  position: absolute;
+  right: 0;
+  top: calc(50% -32px);
 `;

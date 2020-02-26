@@ -7,6 +7,7 @@ import {
   SpanStyled
 } from "./styled";
 import { useFormHook } from "./../../commons/Hooks/formHook";
+import FlexWrapperRow from "./../UI/FlexWrapperRow";
 
 const LoginForm = (props: {}) => {
   const initialState = {
@@ -30,30 +31,34 @@ const LoginForm = (props: {}) => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const fieldTypes: { [key: string]: string } = {
-    userName: "text",
-    password: passwordVisible ? "text" : "password"
+  const fieldTypes: { [key: string]: any } = {
+    userName: {
+      type: "text"
+    },
+    password: {
+      type: passwordVisible ? "text" : "password",
+      component: (
+        <SpanStyled onClick={handleTogglePasswordVisibility}>
+          &#128065;
+        </SpanStyled>
+      )
+    }
   };
 
   return (
     <FormStyled onSubmit={handleSubmit}>
       {Object.keys(formState).map(field => (
-        <React.Fragment key={`key${field}`}>
+        <FlexWrapperRow key={`key${field}`}>
           <LabelStyled>{field}</LabelStyled>
           <InputStyled
             name={field}
             onChange={handleChange(field)}
             value={formState[field]}
-            type={fieldTypes[field]}
+            type={fieldTypes[field].type}
           />
-          {field === "password" && (
-            <SpanStyled onClick={handleTogglePasswordVisibility}>
-              &#128065;
-            </SpanStyled>
-          )}
-        </React.Fragment>
+          {fieldTypes[field].component}
+        </FlexWrapperRow>
       ))}
-
       <SubmitStyled type="submit" value="Login" />
     </FormStyled>
   );
