@@ -7,6 +7,9 @@ export interface IError {
 
 export interface IFormState {
   values: { [key: string]: string };
+  validation: {
+    [field: string]: Array<(value: string) => boolean>;
+  };
   isValid?: boolean;
   errors?: IError[];
   isSubmitted: boolean;
@@ -19,6 +22,7 @@ interface IUserFormHook {
   setSubmitted: (isSubmitted: boolean) => void;
   setErrors: (errors: IError[]) => void;
   setFormState: any;
+  validateForm: () => void;
 }
 
 export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
@@ -39,8 +43,25 @@ export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
     });
   };
 
-  const setErrors = (errors: IError[]) => {
+  const setErrors = (errors: IError[]): void => {
     setFormState({ ...formState, errors, isValid: false, isSubmitted: false });
+  };
+
+  const validateForm = (): void => {
+    const { values, validation } = formState;
+    const errors = Object.entries(values).reduce(
+      (errors: IError[], [name, value]) => {
+        return validation[name].reduce(
+          (result, rule) => result && rule(value),
+          true
+        )
+          ? errors
+          : [...errors, { field: name, message: "Field is required" }];
+      },
+      []
+    );
+
+    setErrors(errors);
   };
 
   return {
@@ -48,6 +69,7 @@ export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
     updateValue,
     setSubmitted,
     setErrors,
-    setFormState
+    setFormState,
+    validateForm
   };
 };

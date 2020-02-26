@@ -1,5 +1,5 @@
 export default {
   stringRules: {
-    isRequired: (value: string) => value && value.length > 0
+    isRequired: (value: string): boolean => !!value && value.length > 0
   }
 };

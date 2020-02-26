@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { SubmitStyled, FormStyled, SpanStyled } from "./styled";
-import {
-  useFormHook,
-  IFormState,
-  IError
-} from "./../../commons/Hooks/formHook";
+import { useFormHook, IFormState } from "./../../commons/Hooks/formHook";
 import FlexWrapperRow from "./../UI/FlexWrapperRow";
 import LoginFormField from "./../LoginFormField";
 import validation from "./../../commons/Validation";
@@ -17,17 +13,15 @@ const LoginForm = (props: {}) => {
       userName: "",
       password: ""
     },
+    validation: {
+      userName: [validation.stringRules.isRequired],
+      password: [validation.stringRules.isRequired]
+    },
     isSubmitted: false,
     isFetching: false
   };
 
-  const {
-    formState,
-    updateValue,
-    setSubmitted,
-    setErrors,
-    setFormState
-  } = useFormHook(initialState);
+  const { formState, updateValue, validateForm } = useFormHook(initialState);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (
@@ -36,29 +30,9 @@ const LoginForm = (props: {}) => {
     updateValue(field)(event.currentTarget.value);
   };
 
-  const validateForm = (): IError[] => {
-    const { isRequired } = validation.stringRules;
-    return Object.entries(formState.values).reduce(
-      (errors: IError[], [name, value]) => {
-        return isRequired(value)
-          ? errors
-          : [...errors, { field: name, message: "Field is required" }];
-      },
-      []
-    );
-  };
-
   const handleSubmit: eventHandler<HTMLFormElement> = event => {
     event.preventDefault();
-    const errors = validateForm();
-
-    if (!!errors.length) {
-      setErrors(errors);
-    } else {
-      /** @todo some POST request to auth API */
-
-      setFormState({ ...formState, isFetching: true });
-    }
+    validateForm();
   };
 
   const togglePasswordVisibility: eventHandler<HTMLSpanElement> = event =>
