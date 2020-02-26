@@ -1,32 +1,64 @@
 import React, { useState } from "react";
 import { SubmitStyled, FormStyled, SpanStyled } from "./styled";
-import { useFormHook } from "./../../commons/Hooks/formHook";
+import {
+  useFormHook,
+  IInitialFormState,
+  IError
+} from "./../../commons/Hooks/formHook";
 import FlexWrapperRow from "./../UI/FlexWrapperRow";
 import LoginFormField from "./../LoginFormField";
 import validation from "./../../commons/Validation";
 import { eventHandler } from "./../../commons/Types";
 
 const LoginForm = (props: {}) => {
-  const initialState = {
-    userName: "",
-    password: ""
+  const initialState: IInitialFormState = {
+    values: {
+      userName: "",
+      password: ""
+    },
+    isSubmitted: false
   };
 
-  const { formState, updateFormField } = useFormHook(initialState);
+  const {
+    formState,
+    updateFormField,
+    setIsValid,
+    setSubmitted,
+    setErrors,
+    clearErrors
+  } = useFormHook(initialState);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (
     field: string
-  ): eventHandler<HTMLInputElement> => event =>
-    void updateFormField(field)(event.currentTarget.value);
+  ): eventHandler<HTMLInputElement> => event => {
+    updateFormField(field)(event.currentTarget.value);
+  };
 
-  const handleBlur = (field: string): eventHandler<HTMLInputElement> => event =>
-    void validate(event.currentTarget.value);
+  const handleValidation = () => {
+    const errors: IError[] = Object.entries(formState.values).reduce(
+      (errors: any, [name, value]) => {
+        return validation.stringRules.isRequired(value)
+          ? errors
+          : [...errors, { field: name, message: "Field is required" }];
+      },
+      []
+    );
 
-  const validate = (value: string) => {};
+    if (!!errors) {
+      setErrors(errors);
+    } else {
+      clearErrors();
+    }
+  };
 
-  const handleSubmit: eventHandler<HTMLFormElement> = event =>
-    void event.preventDefault();
+  /** @todo refactor validation
+   * should return errors object, handle submit should decide what to do next
+   * */
+  const handleSubmit: eventHandler<HTMLFormElement> = event => {
+    event.preventDefault();
+    handleValidation();
+  };
 
   const togglePasswordVisibility: eventHandler<HTMLSpanElement> = event =>
     void setPasswordVisible(!passwordVisible);
@@ -45,15 +77,15 @@ const LoginForm = (props: {}) => {
 
   return (
     <FormStyled onSubmit={handleSubmit}>
-      {Object.keys(formState).map(field => (
-        <FlexWrapperRow key={`key${field}`}>
+      {Object.entries(formState.values).map(([name, value]) => (
+        <FlexWrapperRow key={`key${name}`}>
           <LoginFormField
-            name={field}
-            type={formFieldData[field].type}
-            value={formState[field]}
-            handleChange={handleChange(field)}
+            name={name}
+            type={formFieldData[name].type}
+            value={value}
+            handleChange={handleChange(name)}
           />
-          {formFieldData[field].component}
+          {formFieldData[name].component}
         </FlexWrapperRow>
       ))}
       <SubmitStyled type="submit" value="Login" />
