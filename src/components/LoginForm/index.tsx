@@ -19,14 +19,9 @@ const LoginForm = (props: {}) => {
     isSubmitted: false
   };
 
-  const {
-    formState,
-    updateFormField,
-    setIsValid,
-    setSubmitted,
-    setErrors,
-    clearErrors
-  } = useFormHook(initialState);
+  const { formState, updateFormField, setSubmitted, setErrors } = useFormHook(
+    initialState
+  );
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (
@@ -35,29 +30,28 @@ const LoginForm = (props: {}) => {
     updateFormField(field)(event.currentTarget.value);
   };
 
-  const handleValidation = () => {
-    const errors: IError[] = Object.entries(formState.values).reduce(
-      (errors: any, [name, value]) => {
-        return validation.stringRules.isRequired(value)
+  const validateForm = (): IError[] => {
+    const { isRequired } = validation.stringRules;
+    return Object.entries(formState.values).reduce(
+      (errors: IError[], [name, value]) => {
+        return isRequired(value)
           ? errors
           : [...errors, { field: name, message: "Field is required" }];
       },
       []
     );
-
-    if (!!errors) {
-      setErrors(errors);
-    } else {
-      clearErrors();
-    }
   };
 
-  /** @todo refactor validation
-   * should return errors object, handle submit should decide what to do next
-   * */
   const handleSubmit: eventHandler<HTMLFormElement> = event => {
     event.preventDefault();
-    handleValidation();
+    const errors = validateForm();
+
+    if (!!errors.length) {
+      setErrors(errors);
+    } else {
+      /** @todo some POST request to auth API */
+      setSubmitted(true);
+    }
   };
 
   const togglePasswordVisibility: eventHandler<HTMLSpanElement> = event =>

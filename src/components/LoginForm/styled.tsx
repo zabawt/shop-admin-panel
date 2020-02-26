@@ -12,16 +12,6 @@ export const FormStyled = styled.form`
   position: relative;
 `;
 
-export const InputStyled = styled.input`
-  ${({ theme }) => theme.mixins.input()}
-`;
-
-export const LabelStyled = styled.label`
-  padding: ${({ theme }) => [theme.padding.medium, 0].join(" ")};
-  font-weight: 800;
-  font-family: Arial, sans-serif;
-`;
-
 export const SpanStyled = styled.span`
   font-size: 32px;
   color: black;

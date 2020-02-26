@@ -16,9 +16,7 @@ interface IUserFormHook {
   formState: IInitialFormState;
   updateFormField: any;
   setSubmitted: any;
-  setIsValid: any;
   setErrors: any;
-  clearErrors: any;
 }
 
 export const useFormHook = (
@@ -32,39 +30,23 @@ export const useFormHook = (
       values: { ...formState.values, [field]: value }
     });
 
-  /** @todo simply form methods
-   * - form invalidate
-   * - form validate
-   * - form submit
-   */
   const setSubmitted = (isSubmitted: boolean) => {
-    setFormState({ ...formState, isSubmitted: isSubmitted });
-  };
-
-  const setIsValid = (isValid: boolean) => {
-    setFormState({ ...formState, isValid: isValid });
+    setFormState({
+      ...formState,
+      isSubmitted,
+      errors: undefined,
+      isValid: true
+    });
   };
 
   const setErrors = (errors: IError[]) => {
     setFormState({ ...formState, errors, isValid: false, isSubmitted: false });
   };
 
-  const clearErrors = () => {
-    const updatedState = {
-      ...formState,
-      values: { ...formState.values },
-      isValid: true
-    };
-    delete updatedState.errors;
-    setFormState(updatedState);
-  };
-
   return {
     formState,
     updateFormField,
     setSubmitted,
-    setIsValid,
-    setErrors,
-    clearErrors
+    setErrors
   };
 };
