@@ -21,7 +21,9 @@ const LoginForm = (props: {}) => {
     isFetching: false
   };
 
-  const { formState, updateValue, validateForm } = useFormHook(initialState);
+  const { formState, updateValue, validateForm, submitForm } = useFormHook(
+    initialState
+  );
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (
@@ -33,6 +35,7 @@ const LoginForm = (props: {}) => {
   const handleSubmit: eventHandler<HTMLFormElement> = event => {
     event.preventDefault();
     validateForm();
+    submitForm();
   };
 
   const togglePasswordVisibility: eventHandler<HTMLSpanElement> = event =>

@@ -19,10 +19,8 @@ export interface IFormState {
 interface IUserFormHook {
   formState: IFormState;
   updateValue: (field: string) => (value: string) => void;
-  setSubmitted: (isSubmitted: boolean) => void;
-  setErrors: (errors: IError[]) => void;
-  setFormState: any;
   validateForm: () => void;
+  submitForm: () => void;
 }
 
 export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
@@ -34,12 +32,15 @@ export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
       values: { ...formState.values, [field]: value }
     });
 
-  const setSubmitted = (isSubmitted: boolean) => {
-    setFormState({
-      ...formState,
-      isSubmitted,
-      errors: undefined,
-      isValid: true
+  const submitForm = () => {
+    setFormState(prevState => {
+      return {
+        ...prevState,
+        ...formState,
+        isSubmitted: true,
+        errors: [],
+        isValid: true
+      };
     });
   };
 
@@ -67,9 +68,7 @@ export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
   return {
     formState,
     updateValue,
-    setSubmitted,
-    setErrors,
-    setFormState,
-    validateForm
+    validateForm,
+    submitForm
   };
 };
