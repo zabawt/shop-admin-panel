@@ -2,32 +2,38 @@ import React, { useState } from "react";
 import { SubmitStyled, FormStyled, SpanStyled } from "./styled";
 import {
   useFormHook,
-  IInitialFormState,
+  IFormState,
   IError
 } from "./../../commons/Hooks/formHook";
 import FlexWrapperRow from "./../UI/FlexWrapperRow";
 import LoginFormField from "./../LoginFormField";
 import validation from "./../../commons/Validation";
 import { eventHandler } from "./../../commons/Types";
+import Loader from "../Loader";
 
 const LoginForm = (props: {}) => {
-  const initialState: IInitialFormState = {
+  const initialState: IFormState = {
     values: {
       userName: "",
       password: ""
     },
-    isSubmitted: false
+    isSubmitted: false,
+    isFetching: false
   };
 
-  const { formState, updateFormField, setSubmitted, setErrors } = useFormHook(
-    initialState
-  );
+  const {
+    formState,
+    updateValue,
+    setSubmitted,
+    setErrors,
+    setFormState
+  } = useFormHook(initialState);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (
     field: string
   ): eventHandler<HTMLInputElement> => event => {
-    updateFormField(field)(event.currentTarget.value);
+    updateValue(field)(event.currentTarget.value);
   };
 
   const validateForm = (): IError[] => {
@@ -50,7 +56,8 @@ const LoginForm = (props: {}) => {
       setErrors(errors);
     } else {
       /** @todo some POST request to auth API */
-      setSubmitted(true);
+
+      setFormState({ ...formState, isFetching: true });
     }
   };
 
@@ -71,6 +78,7 @@ const LoginForm = (props: {}) => {
 
   return (
     <FormStyled onSubmit={handleSubmit}>
+      <Loader isFetching={formState.isFetching} />
       {Object.entries(formState.values).map(([name, value]) => (
         <FlexWrapperRow key={`key${name}`}>
           <LoginFormField

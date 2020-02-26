@@ -5,26 +5,26 @@ export interface IError {
   message: string;
 }
 
-export interface IInitialFormState {
+export interface IFormState {
   values: { [key: string]: string };
   isValid?: boolean;
   errors?: IError[];
   isSubmitted: boolean;
+  isFetching: boolean;
 }
 
 interface IUserFormHook {
-  formState: IInitialFormState;
-  updateFormField: any;
-  setSubmitted: any;
-  setErrors: any;
+  formState: IFormState;
+  updateValue: (field: string) => (value: string) => void;
+  setSubmitted: (isSubmitted: boolean) => void;
+  setErrors: (errors: IError[]) => void;
+  setFormState: any;
 }
 
-export const useFormHook = (
-  initialFormState: IInitialFormState
-): IUserFormHook => {
+export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
   const [formState, setFormState] = useState(initialFormState);
 
-  const updateFormField = (field: string) => (value: string): void =>
+  const updateValue = (field: string) => (value: string): void =>
     void setFormState({
       ...formState,
       values: { ...formState.values, [field]: value }
@@ -45,8 +45,9 @@ export const useFormHook = (
 
   return {
     formState,
-    updateFormField,
+    updateValue,
     setSubmitted,
-    setErrors
+    setErrors,
+    setFormState
   };
 };
