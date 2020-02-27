@@ -1,55 +1,65 @@
 import { useState } from "react";
-
+import { keyValuePair, eventHandler } from "./../Types";
 export interface IError {
   field: string;
   message: string;
 }
 
 export interface IFormState {
-  values: { [key: string]: string };
+  values: keyValuePair<string>;
   validation: {
     [field: string]: Array<(value: string) => boolean>;
   };
   isValid?: boolean;
+  touched?: boolean;
   errors?: IError[];
   isSubmitted: boolean;
   isFetching: boolean;
 }
 
 interface IUserFormHook {
-  formState: IFormState;
-  updateValue: (field: string) => (value: string) => void;
+  formState: Partial<IFormState>;
+  values: keyValuePair<string>;
+  updateValue: eventHandler<HTMLInputElement>;
   validateForm: () => void;
   submitForm: () => void;
+  errors: IError[];
 }
 
 export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
-  const [formState, setFormState] = useState(initialFormState);
+  const {
+    values: initialValues,
+    validation: initialValidation,
+    errors: initialErrors = [],
+    ...rest
+  } = initialFormState;
+  const [formState, setFormState] = useState(rest);
+  const [values, setValues] = useState(initialValues);
+  const [validation, setValidation] = useState(initialValidation);
+  const [errors, setErrors] = useState(initialErrors);
 
-  const updateValue = (field: string) => (value: string): void =>
-    void setFormState({
-      ...formState,
-      values: { ...formState.values, [field]: value }
-    });
-
-  const submitForm = () => {
-    setFormState(prevState => {
-      return {
-        ...prevState,
-        ...formState,
-        isSubmitted: true,
-        errors: [],
-        isValid: true
-      };
-    });
+  const formTouched = () => {
+    setFormState({ ...formState, touched: true });
   };
 
-  const setErrors = (errors: IError[]): void => {
-    setFormState({ ...formState, errors, isValid: false, isSubmitted: false });
+  const updateValue: eventHandler<HTMLInputElement> = event => {
+    event.persist();
+    const { name, value } = event.currentTarget;
+    setValues({ ...values, [name]: value });
+    formTouched();
+  };
+
+  const submitForm = () => {
+    if (errors.length === 0 && formState.touched) {
+      setFormState({
+        ...formState,
+        isSubmitted: true,
+        isValid: true
+      });
+    }
   };
 
   const validateForm = (): void => {
-    const { values, validation } = formState;
     const errors = Object.entries(values).reduce(
       (errors: IError[], [name, value]) => {
         return validation[name].reduce(
@@ -67,6 +77,8 @@ export const useFormHook = (initialFormState: IFormState): IUserFormHook => {
 
   return {
     formState,
+    values,
+    errors,
     updateValue,
     validateForm,
     submitForm

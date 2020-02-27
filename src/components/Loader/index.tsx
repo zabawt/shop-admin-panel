@@ -1,11 +1,14 @@
 import React from "react";
 import { StyledDiv, StyledDivContainer } from "./styled";
 
-const Loader = (props: { isFetching: boolean }) => {
-  return props.isFetching ? (
+interface ILoaderProps {
+  isFetching?: boolean;
+}
+
+const Loader = ({ isFetching }: ILoaderProps) => {
+  return isFetching ? (
     <StyledDivContainer>
-      {" "}
-      <StyledDiv></StyledDiv>
+      <StyledDiv />
     </StyledDivContainer>
   ) : null;
 };

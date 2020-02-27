@@ -4,7 +4,7 @@ import { useFormHook, IFormState } from "./../../commons/Hooks/formHook";
 import FlexWrapperRow from "./../UI/FlexWrapperRow";
 import LoginFormField from "./../LoginFormField";
 import validation from "./../../commons/Validation";
-import { eventHandler } from "./../../commons/Types";
+import { eventHandler, keyValuePair } from "./../../commons/Types";
 import Loader from "../Loader";
 
 const LoginForm = (props: {}) => {
@@ -21,27 +21,28 @@ const LoginForm = (props: {}) => {
     isFetching: false
   };
 
-  const { formState, updateValue, validateForm, submitForm } = useFormHook(
-    initialState
-  );
+  const {
+    formState,
+    updateValue,
+    values,
+    validateForm,
+    submitForm,
+    errors
+  } = useFormHook(initialState);
   const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const handleChange = (
-    field: string
-  ): eventHandler<HTMLInputElement> => event => {
-    updateValue(field)(event.currentTarget.value);
-  };
 
   const handleSubmit: eventHandler<HTMLFormElement> = event => {
     event.preventDefault();
     validateForm();
-    submitForm();
+    if (errors.length === 0) {
+      submitForm();
+    }
   };
 
   const togglePasswordVisibility: eventHandler<HTMLSpanElement> = event =>
-    void setPasswordVisible(!passwordVisible);
+    setPasswordVisible(!passwordVisible);
 
-  const formFieldData: { [key: string]: any } = {
+  const formFieldData: keyValuePair<string | any> = {
     userName: {
       type: "text"
     },
@@ -56,13 +57,13 @@ const LoginForm = (props: {}) => {
   return (
     <FormStyled onSubmit={handleSubmit}>
       <Loader isFetching={formState.isFetching} />
-      {Object.entries(formState.values).map(([name, value]) => (
+      {Object.entries(values).map(([name, value]) => (
         <FlexWrapperRow key={`key${name}`}>
           <LoginFormField
             name={name}
             type={formFieldData[name].type}
             value={value}
-            handleChange={handleChange(name)}
+            handleChange={updateValue}
           />
           {formFieldData[name].component}
         </FlexWrapperRow>
