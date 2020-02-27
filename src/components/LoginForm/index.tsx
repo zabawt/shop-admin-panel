@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SubmitStyled, FormStyled, SpanStyled } from "./styled";
-import { useFormHook, IFormState } from "./../../commons/Hooks/formHook";
+import { useForm, IFormState } from "../../commons/Hooks/useForm";
 import FlexWrapperRow from "./../UI/FlexWrapperRow";
 import LoginFormField from "./../LoginFormField";
 import validation from "./../../commons/Validation";
@@ -21,22 +21,12 @@ const LoginForm = (props: {}) => {
     isFetching: false
   };
 
-  const {
-    formState,
-    updateValue,
-    values,
-    validateForm,
-    submitForm,
-    errors
-  } = useFormHook(initialState);
+  const { formState, updateValue, values, submitForm } = useForm(initialState);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleSubmit: eventHandler<HTMLFormElement> = event => {
     event.preventDefault();
-    validateForm();
-    if (errors.length === 0) {
-      submitForm();
-    }
+    submitForm();
   };
 
   const togglePasswordVisibility: eventHandler<HTMLSpanElement> = event =>

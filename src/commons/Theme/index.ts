@@ -1,7 +1,7 @@
 import { DefaultTheme } from "styled-components";
 
 const spacingBaseSize = 12;
-
+// eslint-disable-next-line
 const deviceWidths = {
   giant: 1170,
   desktop: 992,
